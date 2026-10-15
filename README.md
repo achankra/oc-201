@@ -2,6 +2,8 @@
 
 Lab code for OC-201, Cloud Native Platform Engineering with OpenChoreo, from the Platform Engineering Academy by Platformetrics in collaboration with WSO2/OpenChoreo. Each folder belongs to one lab in the workbook. You run it on your own machine, next to the k3d cluster with OpenChoreo v1.3.1 from the pre-work.
 
+**Start with [WORKBOOK.md](WORKBOOK.md).** Each module folder has two editions of its step-by-step workbook: `WORKBOOK-local.md` for OpenChoreo on your own machine, the main path for the course, and `WORKBOOK-sandbox.md` for the WSO2 OpenChoreo Sandbox. Every code block has a copy button.
+
 Most labs start with a small local demo of one idea: device sign-in, policy checks, traffic rules, events, error budgets. The demos need no cluster. The rest of the lab does the same thing in OpenChoreo, so you recognize the idea when you meet it there.
 
 ## Setup
@@ -28,16 +30,19 @@ echo 'setopt interactivecomments' >> ~/.zshrc && source ~/.zshrc
 
 | Folder | Lab | What it holds |
 |---|---|---|
+| `prework` | Pre-work | The workbook for installing the tools and the cluster |
+| `lab1` | Lab 1, verify the install, deploy and trace | The workbook only; Lab 1 uses only OpenChoreo |
 | `lab2-device-login` | Lab 2, occ login and access roles | The device authorization flow in miniature, and the role and binding that grant a team access |
 | `lab3-policy-check` | Lab 3, policy check, governed cell, runtime view | A Rego policy for files and live Deployments, the governed ClusterProjectType, the project script, and the declared-versus-observed comparison |
 | `lab4-agents` | Lab 4, connect an AI agent to OpenChoreo | Registration of both MCP servers (service token by default), skill installation, the prompts, and a no-agent path |
 | `lab5` | Lab 5, a ComponentType and a Trait | A README. The workbook steps write the exported type, the scaffold and the component here |
 | `lab6-traffic-control` | Lab 6, build, promote and diagnose | Traffic guardrails, canary and blue/green routing, an HTTPRoute generator, and the wirelogs and web shell exercises |
+| `lab7` | Lab 7, observe, alert and scale out | The workbook for Lab 7, which uses the three folders below |
 | `lab7-events` | Lab 7, fan out | One deployment event, independent consumers |
 | `lab7-sre-agent` | Lab 7, alert and SRE agent | The notification channel, the alert rule, the incident setting, the SRE agent setup, Claude Code as the SRE, and a local stand-in |
 | `lab7-slo` | Lab 7, stretch | An SLO, an error budget, and a request log from your own greeter scored against both |
 
-Lab 1 uses only OpenChoreo, so it has no folder. Some steps write files into these folders as you go, such as `lab3-project.yaml`, the Lab 5 YAML and `traffic-live.log`. They are your own lab output, and git ignores them.
+Some steps write files into these folders as you go, such as `lab3-project.yaml`, the Lab 5 YAML and `traffic-live.log`. They are your own lab output, and git ignores them.
 
 ## What you need
 
