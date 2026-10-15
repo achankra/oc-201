@@ -1,0 +1,16 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: AuthzRoleBinding
+metadata:
+  name: team-alpha-developers
+  namespace: default
+spec:
+  entitlement:
+    claim: groups
+    value: team-alpha-developers
+  roleMappings:
+    - roleRef:
+        kind: AuthzRole
+        name: team-developer
+      scope:
+        project: default
+  effect: allow

@@ -1,0 +1,4 @@
+# Static view: the dependencies the application declares.
+frontend -> orders
+orders -> payments
+orders -> inventory

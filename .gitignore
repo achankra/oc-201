@@ -1,0 +1,20 @@
+# Python and editor files
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+
+# Files the workbook steps write while you run the labs.
+# They are generated on each learner's cluster, so they are not committed.
+lab3-policy-check/lab3-project.yaml
+lab3-policy-check/default-project-type.yaml
+lab3-policy-check/governed-cell.yaml
+lab3-policy-check/my-declared.txt
+lab3-policy-check/my-observed.txt
+lab5/*.yaml
+lab6/
+lab6-traffic-control/configs/canary-broken.yaml
+lab7-sre-agent/logs.txt
+lab7-slo/traffic-live.log
+lab7-slo/slo-greeter.yaml
+lab7-slo/traffic-down.log

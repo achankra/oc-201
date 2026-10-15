@@ -1,0 +1,22 @@
+# Required before any alert rule: the observability-alert-rule trait refuses to render
+# unless the environment has a notification channel. Applied in Lab 5 and Lab 7.
+# Replace the URL with an address you control to receive the alerts yourself. The first channel created in an
+# environment becomes that environment's default.
+apiVersion: openchoreo.dev/v1alpha1
+kind: ObservabilityAlertsNotificationChannel
+metadata:
+  name: lab-webhook
+  namespace: default
+spec:
+  environment: development
+  isEnvDefault: true
+  type: webhook
+  webhookConfig:
+    url: https://example.com/openchoreo-alerts
+    payloadTemplate: |
+      {
+        "alertName": "${alertName}",
+        "alertSeverity": "${alertSeverity}",
+        "alertTimestamp": "${alertTimestamp}",
+        "alertDescription": "${alertDescription}"
+      }

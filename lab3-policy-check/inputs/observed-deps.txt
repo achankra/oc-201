@@ -1,0 +1,5 @@
+# Runtime view: the connections seen while the application served traffic.
+frontend -> orders
+orders -> payments
+orders -> audit-log
+frontend -> payments

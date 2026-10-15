@@ -1,0 +1,70 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: ClusterProjectType
+metadata:
+  name: governed
+  labels:
+    openchoreo.dev/name: governed
+  annotations:
+    openchoreo.dev/display-name: Governed Project Type
+    openchoreo.dev/description: Cell namespace with a resource quota and default-deny egress (DNS allowed).
+spec:
+  environmentConfigs:
+    openAPIV3Schema:
+      properties:
+        namespaceAnnotations:
+          additionalProperties:
+            type: string
+          default: {}
+          type: object
+        namespaceLabels:
+          additionalProperties:
+            type: string
+          default: {}
+          type: object
+      type: object
+  resources:
+  - id: cell-namespace
+    targetPlane: dataplane
+    template:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        annotations: ${environmentConfigs.namespaceAnnotations}
+        labels: ${oc_merge(metadata.labels, environmentConfigs.namespaceLabels)}
+        name: ${metadata.namespace}
+  - id: cell-quota
+    targetPlane: dataplane
+    template:
+      apiVersion: v1
+      kind: ResourceQuota
+      metadata:
+        name: cell-quota
+        namespace: ${metadata.namespace}
+      spec:
+        hard:
+          requests.cpu: "2"
+          requests.memory: 4Gi
+          limits.cpu: "4"
+          limits.memory: 8Gi
+  - id: cell-default-deny-egress
+    targetPlane: dataplane
+    template:
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: default-deny-egress
+        namespace: ${metadata.namespace}
+      spec:
+        podSelector: {}
+        policyTypes:
+        - Egress
+        egress:
+        - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: kube-system
+          ports:
+          - protocol: UDP
+            port: 53
+          - protocol: TCP
+            port: 53

@@ -1,0 +1,15 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: AuthzRole
+metadata:
+  name: team-developer
+  namespace: default
+spec:
+  description: Deploy and view components
+  actions:
+    - "component:create"
+    - "component:view"
+    - "component:update"
+    - "releasebinding:create"
+    - "releasebinding:update"
+    - "project:view"
+    - "namespace:view"

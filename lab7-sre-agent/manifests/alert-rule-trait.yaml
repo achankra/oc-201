@@ -1,0 +1,25 @@
+# The alert rule Lab 7 attaches to greeter-service, under spec.traits of the Component.
+# It creates an ObservabilityAlertRule for the component.
+#
+# The rule fires when more than 3 log lines match lab7-error inside 5 minutes.
+# The greeter never logs lab7-error by itself, so you decide when it fires.
+#
+# On v1.3.1 the trait is a ClusterTrait. Check with:
+#   kubectl get clustertraits,traits -A | grep observability-alert-rule
+# The workbook applies these same values as a JSON patch, so nothing is pasted as YAML.
+# Apply notification-channel-webhook.yaml first: the trait will not render without a channel.
+traits:
+  - name: observability-alert-rule
+    kind: ClusterTrait
+    instanceName: high-error-rate-log-alert
+    parameters:
+      description: "lab7-error lines in the greeter log"
+      severity: "critical"
+      source:
+        type: "log"
+        query: "lab7-error"
+      condition:
+        window: 5m
+        interval: 1m
+        operator: gt
+        threshold: 3

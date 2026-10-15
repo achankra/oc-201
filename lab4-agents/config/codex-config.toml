@@ -1,0 +1,11 @@
+# Add these two blocks to ~/.codex/config.toml.
+# Codex CLI uses client credentials: set OPENCHOREO_MCP_TOKEN to an access token first.
+# The token expires after 1 hour by default. Get a new one and set the variable again.
+
+[mcp_servers.openchoreo-cp]
+url = "http://api.openchoreo.localhost:8080/mcp"
+bearer_token_env_var = "OPENCHOREO_MCP_TOKEN"
+
+[mcp_servers.openchoreo-obs]
+url = "http://observer.openchoreo.localhost:11080/mcp"
+bearer_token_env_var = "OPENCHOREO_MCP_TOKEN"

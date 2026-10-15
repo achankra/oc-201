@@ -1,0 +1,16 @@
+# The per-environment setting Lab 7 merges into the greeter-service-development ReleaseBinding.
+# The key under traitEnvironmentConfigs is the instanceName of the alert rule.
+#
+# enabled: the rule runs in this environment
+# incident.enabled: an incident is created when the rule fires
+# incident.triggerAiRca: the built-in SRE agent analyzes the incident.
+#   It needs an OpenAI API key. Without one, set it to false and use Claude Code
+#   through the MCP servers, or the local stand-in in simulate/.
+spec:
+  traitEnvironmentConfigs:
+    high-error-rate-log-alert:
+      enabled: true
+      actions:
+        incident:
+          enabled: true
+          triggerAiRca: true
