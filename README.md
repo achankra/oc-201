@@ -37,7 +37,7 @@ echo 'setopt interactivecomments' >> ~/.zshrc && source ~/.zshrc
 | `lab7-sre-agent` | Lab 7, alert and SRE agent | The notification channel, the alert rule, the incident setting, the SRE agent setup, Claude Code as the SRE, and a local stand-in |
 | `lab7-slo` | Lab 7, stretch | An SLO, an error budget, and a request log from your own greeter scored against both |
 
-Lab 1 uses only OpenChoreo, so it has no folder. Files the labs write as you go (`lab3-project.yaml`, the Lab 5 YAML, `lab6/`, `logs.txt`, `traffic-live.log` and others) are listed in `.gitignore`.
+Lab 1 uses only OpenChoreo, so it has no folder. Some steps write files into these folders as you go, such as `lab3-project.yaml`, the Lab 5 YAML and `traffic-live.log`. They are your own lab output, and git ignores them.
 
 ## What you need
 
@@ -51,7 +51,7 @@ Lab 1 uses only OpenChoreo, so it has no folder. Files the labs write as you go 
 
 ## Known issues on v1.3.1
 
-Each of these came up running the labs on a local k3d install. The workbook and the lab READMEs already include the fix.
+The labs already work around each of these. If you see one of the symptoms, the last column says what fixes it and which lab covers it.
 
 | Symptom | Cause | Fix, and where |
 |---|---|---|
@@ -70,10 +70,10 @@ Each of these came up running the labs on a local k3d install. The workbook and 
 | No `sre-agent` pod with a Claude key | The SRE agent supports OpenAI only | Claude Code as the SRE through MCP, Lab 7 |
 | The live SLO run says `payments-api` | The sample SLO names a sample service | Score against `slo-greeter.yaml`, Lab 7 stretch |
 
-## Notes
+## Good to know
 
-- The identity provider in `lab2-device-login` signs tokens with a shared secret written in the source. Fine for a demo on 127.0.0.1, wrong for anything else. It uses ports 8081 and 8082.
-- Output in each README is what to expect, not a byte-for-byte match. Canary routing in lab 6 is random.
-- Wirelogs and the runtime view of the cell diagram need the Cilium network module from `openchoreo/community-modules`. The default k3d install uses flannel, so those views are not available without recreating the cluster with Cilium. The labs show the same cases with `kubectl`.
-- The service client `service_mcp_client` has the `admin` role on the local install. The agent's calls are audited under that client, not your user. Bind a narrower role for anything beyond a lab.
-- Keep API keys out of the repository.
+- Your output will not match the READMEs character for character. Names, timestamps and generated IDs differ on every machine, and the canary in Lab 6 routes requests at random.
+- The identity provider in Lab 2 signs its tokens with a secret written in its source code. That is fine for a demo on your own machine and never acceptable in a real system. It uses ports 8081 and 8082, so stop anything already using them before Lab 2.
+- On the local install, the wirelogs and the runtime view of the cell diagram stay empty. They need the Cilium network plugin, which the local install does not include. The labs show the same results with `kubectl`.
+- In Lab 4 your AI agent connects as `service_mcp_client`, which has the `admin` role on the local install. The audit log records the agent's calls under that name, not yours. On a real platform, give an agent the narrowest role that does the job.
+- If you use an API key in Lab 4 or Lab 7, never commit it to a repository.

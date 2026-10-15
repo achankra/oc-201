@@ -28,6 +28,7 @@ python3 run_demo.py
 This runs the canary config and then the blue/green config. To run your own file, or a single one, pass the paths:
 
 ```
+cd ~/oc-201-labs/lab6-traffic-control
 python3 run_demo.py configs/canary.yaml
 ```
 
@@ -53,6 +54,7 @@ python3 to_httproute.py configs/canary.yaml --gateway $GW_NAME --gateway-namespa
 To see a guardrail stop a route, make a broken copy of the canary config and run it:
 
 ```
+cd ~/oc-201-labs/lab6-traffic-control
 sed 's/canary_percentage: 20/canary_percentage: 150/' configs/canary.yaml > configs/canary-broken.yaml
 python3 to_httproute.py configs/canary-broken.yaml --gateway $GW_NAME
 ```

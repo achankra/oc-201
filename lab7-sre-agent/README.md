@@ -82,7 +82,7 @@ The script:
 3. Points the default `ClusterObservabilityPlane` at the agent (`rcaAgentURL`).
 4. Waits for the `sre-agent` pod.
 
-It uses chart 1.3.1, the version this course installs. Set `CHART_VERSION` to override. If an ExternalSecret already manages `rca-agent-secret`, the script stops; put the key in the secret store behind it.
+It uses chart 1.3.1, the version your cluster runs.
 
 ## 4. Cause the alert
 
@@ -161,6 +161,7 @@ Read any of them as a lead, not a verdict. Confirm it with the logs, the wirelog
 - You pressed Ctrl-C during the 90-second wait: the injection already ran. Wait a minute, then run `kubectl get observabilityalertrules -A`.
 - `can't create /proc/1/fd/1`: run `kubectl exec -n $NS deploy/$DEP -- id`; the exec user must match the process user.
 - No `sre-agent` pod: you have no OpenAI key or skipped step 3. Use step 5 or 6.
+- The script stops because an ExternalSecret manages `rca-agent-secret`: your cluster keeps secrets in an external store. Put the key there, or use step 5 or 6.
 
 ## How it maps to OpenChoreo
 

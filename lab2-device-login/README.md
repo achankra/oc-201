@@ -27,9 +27,9 @@ python3 api_server.py &
 python3 cli_login.py
 ```
 
-When you are done, stop the API with `kill %1` in terminal 2 and the identity provider with Ctrl-C in terminal 1.
-
 The client prints a URL and a six-digit code. Open the URL in a browser, enter the code, choose a team, and press Approve. The client then receives a token, prints the claims inside it (`sub`, `team`, `aud`, expiry), and calls the API.
+
+When you are done, stop the API with `kill %1` in terminal 2 and the identity provider with Ctrl-C in terminal 1.
 
 ## Without a browser
 
@@ -56,8 +56,7 @@ The token lives for five minutes. Run the client again for a new one.
 
 - Approve with a code that does not exist, then read the error in the browser.
 - Wait more than five minutes after login and call the API with the same token.
-- In `api_server.py`, change `ALLOWED_TEAM` and restart the API.
-- Find `team` in the printed claims, then change `ALLOWED_TEAM` in the API and see which team now gets through.
+- Find `team` in the printed claims. Then change `ALLOWED_TEAM` in `api_server.py`, restart the API, and see which team now gets through.
 
 ## How it maps to OpenChoreo
 

@@ -27,11 +27,14 @@ There is no program to run here. The folder holds helper scripts, one config fil
 | `openchoreo-cp` | `http://api.openchoreo.localhost:8080/mcp` | Namespaces, projects, components, workloads, release bindings, builds, environments, planes, roles |
 | `openchoreo-obs` | `http://observer.openchoreo.localhost:11080/mcp` | Logs, metrics, traces, alerts, incidents, cost insights, audit logs |
 
-On an install that is not the default k3d setup, use your own URLs. Check that both answer:
+Check that both answer:
 
 ```
+cd ~/oc-201-labs/lab4-agents
 ./scripts/check-mcp.sh
 ```
+
+Each line starts with `HTTP` and a status code. `NO ANSWER` means that plane is not running.
 
 ## 1. Register the servers and sign in
 
@@ -51,6 +54,7 @@ There are two ways to authenticate: a service token from client credentials, or 
 The default route uses a service token, with no browser sign-in:
 
 ```
+cd ~/oc-201-labs/lab4-agents
 ./scripts/register-claude-code-token.sh
 claude
 ```
@@ -77,7 +81,7 @@ Run `opencode mcp add` twice. At the prompts:
 
 ### Cursor and Gemini CLI
 
-A browser window opens for sign-in the first time the agent uses a server. Add both servers in the agent's own MCP settings. Gemini CLI uses `http://localhost:7777/oauth/callback` as its redirect address by default. That address has to be on the allowed redirect list of the OAuth application, or sign-in fails.
+A browser window opens for sign-in the first time the agent uses a server. Add both servers in the agent's own MCP settings. If Gemini CLI's sign-in fails with a redirect error, the install does not accept Gemini's default redirect address (`http://localhost:7777/oauth/callback`). Ask your instructor, or use Claude Code with the token script.
 
 ### Codex CLI and VS Code with GitHub Copilot: client credentials
 
@@ -97,6 +101,7 @@ codex
 ## 2. Install the skills
 
 ```
+cd ~/oc-201-labs/lab4-agents
 ./scripts/install-skills.sh
 ```
 
@@ -127,6 +132,7 @@ The last prompt asks the agent to show its own calls from the audit log. Audit l
 If you do not have a coding agent, run the same reads with `occ` and `kubectl`:
 
 ```
+cd ~/oc-201-labs/lab4-agents
 ./no-agent/run-reads.sh default greeter-service
 ```
 
@@ -142,7 +148,7 @@ It covers prompts 1, 2, 4 and 5. For prompt 3: `occ component logs greeter-servi
 ## If something fails
 
 - No tools appear: run `./scripts/register-claude-code-token.sh` and restart Claude Code, or check that both URLs answer with `./scripts/check-mcp.sh`.
-- `MCP server openchoreo-cp already exists`: an old copy of a script. The current scripts remove earlier registrations first; or run `claude mcp remove openchoreo-cp -s user` and `claude mcp remove openchoreo-obs -s user`.
+- `MCP server openchoreo-cp already exists`: the servers were registered earlier by hand. Run `claude mcp remove openchoreo-cp -s user` and `claude mcp remove openchoreo-obs -s user`, then the token script again.
 - Servers work in one folder only: they were registered for that folder. Run the token script; it registers them for your user.
 - Sign-in completes in the browser but the server still says "needs authentication": use `./scripts/register-claude-code-token.sh`.
 - The agent runs `kubectl` instead of MCP tools: the servers are not connected. Fix that first; add "Use only the OpenChoreo MCP tools" to the prompt.

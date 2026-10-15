@@ -19,9 +19,8 @@ Python 3.9 or newer. No other packages.
 
 ## Run it
 
-From this folder:
-
 ```
+cd ~/oc-201-labs/lab7-events
 python3 run_demo.py events/github_deploy_completed.json
 python3 run_demo.py events/github_deploy_failed.json
 python3 run_demo.py events/github_deploy_completed.json --enable new_consumer
