@@ -4,6 +4,8 @@ Lab code for OC-201, Cloud Native Platform Engineering with OpenChoreo, from the
 
 **Start with [WORKBOOK.md](WORKBOOK.md).** Each module folder has two editions of its step-by-step workbook: `WORKBOOK-local.md` for OpenChoreo on your own machine, the main path for the course, and `WORKBOOK-sandbox.md` for the WSO2 OpenChoreo Sandbox. Every code block has a copy button.
 
+New to the vocabulary? [TERMINOLOGY.md](TERMINOLOGY.md) explains each OpenChoreo term, what the industry usually does instead, and what OpenChoreo changes.
+
 Most labs start with a small local demo of one idea: device sign-in, policy checks, traffic rules, events, error budgets. The demos need no cluster. The rest of the lab does the same thing in OpenChoreo, so you recognize the idea when you meet it there.
 
 ## Setup

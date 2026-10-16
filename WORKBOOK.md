@@ -7,6 +7,8 @@ Each module folder has two editions of its workbook:
 - **WORKBOOK-local.md**: OpenChoreo v1.3.1 on a k3d cluster on your own machine. This is the main path for the course.
 - **WORKBOOK-sandbox.md**: the WSO2 OpenChoreo Sandbox at demo.openchoreo.wso2.com (v1.2.2, one-hour sessions). Use it if you cannot run the cluster locally.
 
+For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
+
 ## Modules
 
 | Module | Topic | Local install | Sandbox |
