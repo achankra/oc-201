@@ -1,0 +1,11 @@
+apiVersion: openchoreo.dev/v1alpha1
+kind: Project
+metadata:
+  name: governed-demo
+  namespace: default
+spec:
+  deploymentPipelineRef:
+    name: default
+  type:
+    kind: ClusterProjectType
+    name: governed

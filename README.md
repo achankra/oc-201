@@ -37,14 +37,14 @@ echo 'setopt interactivecomments' >> ~/.zshrc && source ~/.zshrc
 | `lab2-device-login` | Lab 2, occ login and access roles | The device authorization flow in miniature, and the role and binding that grant a team access |
 | `lab3-policy-check` | Lab 3, policy check, governed cell, runtime view | A Rego policy for files and live Deployments, the governed ClusterProjectType, the project script, and the declared-versus-observed comparison |
 | `lab4-agents` | Lab 4, connect an AI agent to OpenChoreo | Registration of both MCP servers (service token by default), skill installation, the prompts, and a no-agent path |
-| `lab5` | Lab 5, a ComponentType and a Trait | A README. The workbook steps write the exported type, the scaffold and the component here |
+| `lab5` | Lab 5, a ComponentType and a Trait | A README and reference copies. You create the exported type, the scaffold and the component here as you run the steps |
 | `lab6-traffic-control` | Lab 6, build, promote and diagnose | Traffic guardrails, canary and blue/green routing, an HTTPRoute generator, and the wirelogs and web shell exercises |
 | `lab7` | Lab 7, observe, alert and scale out | The workbook for Lab 7, which uses the three folders below |
 | `lab7-events` | Lab 7, fan out | One deployment event, independent consumers |
 | `lab7-sre-agent` | Lab 7, alert and SRE agent | The notification channel, the alert rule, the incident setting, the SRE agent setup, Claude Code as the SRE, and a local stand-in |
 | `lab7-slo` | Lab 7, stretch | An SLO, an error budget, and a request log from your own greeter scored against both |
 
-Some steps write files into these folders as you go, such as `lab3-project.yaml`, the Lab 5 YAML and `traffic-live.log`. They are your own lab output, and git ignores them.
+Some steps write files into these folders as you go, such as `lab3-project.yaml`, the Lab 5 YAML and `traffic-live.log`. They are your own lab output, and git ignores them. Each lab that creates files has a `reference/` folder with a copy of each one from a working run: if a step fails or you fall behind, copy the file into place and carry on.
 
 ## What you need
 
@@ -72,7 +72,7 @@ The labs already work around each of these. If you see one of the symptoms, the 
 | The agent runs `kubectl` instead of MCP tools | The servers were added after the session started | Restart Claude Code; every prompt ends "Use only the OpenChoreo MCP tools", Lab 4 |
 | `A notification channel is mandatory for alert rules` | The alert-rule trait needs a default channel in the environment | Apply `notification-channel-webhook.yaml` first, Labs 5 and 7 |
 | The route dry-run fails against the gateway | `kubectl get gateways -A` lists one per plane; components use the data plane's | `GW_NS=openchoreo-data-plane`, Lab 6 |
-| `configs/canary-broken.yaml` not found | The broken copy is generated, not shipped | Each block creates it with `sed` first, Lab 6 |
+| `configs/canary-broken.yaml` not found | The broken copy is generated, not shipped | Each block creates it with `sed` first; or run `cp reference/canary-broken.yaml configs/` in `lab6-traffic-control`, Lab 6 |
 | `/proc/net/tcp` shows no listener | The greeter listens on an IPv6 socket | Read `/proc/net/tcp6`; port 9090 is `2382`, Lab 6 |
 | No `sre-agent` pod with a Claude key | The SRE agent supports OpenAI only | Claude Code as the SRE through MCP, Lab 7 |
 | The live SLO run says `payments-api` | The sample SLO names a sample service | Score against `slo-greeter.yaml`, Lab 7 stretch |

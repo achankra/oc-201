@@ -12,6 +12,24 @@ A simulated gateway with platform guardrails. A developer describes intent in a 
 | `to_httproute.py` | Turns a config into a Gateway API HTTPRoute with weighted backends |
 | `configs/canary.yaml` | 20 percent of requests go to v2 |
 | `configs/bluegreen.yaml` | All requests go to the active color |
+| `reference/` | Copies of the files you create in this lab, for catching up |
+
+## Files you create in this lab
+
+These are not in the repository until you run the step that writes them. Git ignores them.
+
+| File | Created in | What it is |
+|---|---|---|
+| `~/oc-201-labs/lab6/lab6-scaffold.yaml` | workbook step 3 | What `occ component scaffold` generates for a component built with `dockerfile-builder` |
+| `configs/canary-broken.yaml` | the guardrail steps | The canary config with `canary_percentage: 150`, which the guardrails reject |
+
+If a step fails or you fall behind, copy the file from `reference/`:
+
+```
+cd ~/oc-201-labs/lab6-traffic-control
+cp reference/canary-broken.yaml configs/
+mkdir -p ~/oc-201-labs/lab6 && cp reference/lab6-scaffold.yaml ~/oc-201-labs/lab6/
+```
 
 ## Requirements
 

@@ -6,6 +6,7 @@ __pycache__/
 
 # Files the workbook steps write while you run the labs.
 # They are generated on each learner's cluster, so they are not committed.
+# Reference copies of them live in each lab's reference/ folder, which is committed.
 lab3-policy-check/lab3-project.yaml
 lab3-policy-check/default-project-type.yaml
 lab3-policy-check/governed-cell.yaml
@@ -18,3 +19,4 @@ lab7-sre-agent/logs.txt
 lab7-slo/traffic-live.log
 lab7-slo/slo-greeter.yaml
 lab7-slo/traffic-down.log
+

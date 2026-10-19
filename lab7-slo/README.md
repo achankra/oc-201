@@ -9,6 +9,18 @@ A short script that compares a request log with an SLO and reports whether the o
 | `traffic-bad.log` | Twenty requests, one HTTP 503 |
 | `collect_status.sh` | Calls a URL several times and records one status code per line |
 | `calculate_slo.py` | Reads a log and the SLO, then prints the result |
+| `reference/slo-greeter.yaml` | A copy of the greeter SLO you create below, for catching up |
+
+## Files you create in this lab
+
+These are not in the repository until you run the step that writes them. Git ignores them.
+
+| File | What it is |
+|---|---|
+| `slo-greeter.yaml` | `slo.yaml` with the service renamed `greeter-service` |
+| `traffic-live.log`, `traffic-down.log` | Status codes recorded from your greeter. No reference copy: they come from your own cluster |
+
+If you need the SLO file without running the `sed` line: `cp reference/slo-greeter.yaml .`
 
 ## Requirements
 

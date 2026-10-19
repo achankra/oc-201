@@ -14,6 +14,19 @@ A Rego policy checks a Deployment before it would be created. A ClusterProjectTy
 | `scripts/check-live.sh` | Runs the same policy on every Deployment in a namespace on your cluster |
 | `scripts/create-governed-project.sh` | Creates the `governed-demo` project, its ProjectReleaseBindings, and waits for its cells |
 | `scripts/compare_deps.py` | Compares declared dependencies with observed connections |
+| `reference/` | Copies of the files you create in this lab, for catching up |
+
+## Files you create in this lab
+
+These are not in the repository until you run the step that writes them. Git ignores them.
+
+| File | Created in | What it is |
+|---|---|---|
+| `default-project-type.yaml` | part C | The built-in `default` ClusterProjectType, exported to compare with the governed one |
+| `lab3-project.yaml` | part D, by `create-governed-project.sh` | The `governed-demo` Project, using the `governed` type |
+| `my-declared.txt`, `my-observed.txt` | part E | Your one-line dependency lists for the `--strict` comparison |
+
+If a step fails or you fall behind, copy the file from `reference/`, for example `cp reference/default-project-type.yaml .`, and carry on from the next step.
 
 ## Requirements
 
