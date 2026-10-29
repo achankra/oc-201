@@ -16,7 +16,7 @@ Git ignores them, so your own versions never show up as changes.
 
 ## Reference copies
 
-`reference/` holds a copy of each file as it came out of a working v1.3.1 run. Use one if a step fails or you fall behind: copy it into place, then carry on from the next step.
+`reference/` holds a copy of each file as it came out of a working v1.3 run. Use one if a step fails or you fall behind: copy it into place, then carry on from the next step.
 
 ```
 cd ~/oc-201-labs/lab5

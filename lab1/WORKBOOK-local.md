@@ -99,9 +99,11 @@ The last command prints the namespace the objects live in. In Lab 3 you will see
 URL=http://development-default.openchoreoapis.localhost:19080/greeter-service-http
 curl $URL/greeter/greet
 curl "$URL/greeter/greet?name=OpenChoreo"
+kubectl get releasebinding greeter-service-development -n default \
+  -o jsonpath='{.status.endpoints}{"\n"}'
 ```
 
-The URL pattern is `http://{environment}-{namespace}.{gateway-host}:19080/{component}-{endpoint}/{path}`. The answers are `Hello, Stranger!` and `Hello, OpenChoreo!`.
+The answers are `Hello, Stranger!` and `Hello, OpenChoreo!`. The URL follows `http://{environment}-{namespace}.{gateway-host}:19080/{component}-{endpoint}/{path}`, which holds for service components with external endpoints. The last command prints the URL the platform actually published, from the ReleaseBinding's `status.endpoints`; when in doubt, use that.
 
 ## Checkpoint
 

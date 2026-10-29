@@ -121,29 +121,37 @@ Check that both servers are connected:
 claude mcp list | grep openchoreo
 ```
 
-Both lines end in `Connected`. Start Claude Code, or restart it if it was already running; it reads the server list only at start. Run `/mcp` and check both servers show a tool count. Then use the prompts in `prompts/lab4-prompts.md`, in order. Each asks the agent to use only the OpenChoreo MCP tools, so it does not fall back to `kubectl`, whose calls never reach the audit log. They ask the agent to list what is running, explain the Lab 1 service, read its recent logs and list its release bindings.
+Both lines end in `Connected`. Start Claude Code, or restart it if it was already running; it reads the server list only at start. Run `/mcp` and check both servers show a tool count. Then use the prompts in `prompts/lab4-prompts.md`, in order. Each asks the agent to use only the OpenChoreo MCP tools, so it does not fall back to `kubectl`, whose calls never reach the audit log. They ask the agent to list what is running, explain the Lab 1 service, read its recent logs, list its release bindings, create a project and read the audit log.
 
 ## 4. Find the agent's actions in the audit log
 
-The last prompt asks the agent to show its own calls from the audit log. Audit logs record calls made through the REST API and through MCP. The agent reads them with the observability server.
+The audit log records changes made through the REST API and through MCP: create, update and delete, with the decision on each. Reads are not recorded, not even denied ones, and reads of the audit log itself are not recorded by default. That is why prompt 5 creates a project: prompt 6 then finds that creation, under `service_mcp_client`, and none of the reads. The agent reads the log with the observability server.
+
+On the local install `service_mcp_client` has the `admin` role, so the agent could change anything. In a real platform, bind the agent's client to the narrowest role that does the job, as you bound a team in Lab 2.
+
+Remove the demo project when you are done:
+
+```
+kubectl delete project agent-demo -n default
+```
 
 ## No agent available
 
-If you do not have a coding agent, run the same reads with `occ` and `kubectl`:
+If you do not have a coding agent, run the same calls with `occ` and `kubectl`:
 
 ```
 cd ~/oc-201-labs/lab4-agents
 ./no-agent/run-reads.sh default greeter-service
 ```
 
-It covers prompts 1, 2, 4 and 5. For prompt 3: `occ component logs greeter-service -n default -p default --env development --tail 50`. Audit logs cover calls made through the OpenChoreo API, so the `occ` calls appear and the `kubectl` calls do not. You get the same data, but you do not see how an agent uses the tools.
+It covers prompts 1, 2 and 4 to 6, and creates the `agent-demo` project with `occ apply` for prompt 5. For prompt 3: `occ component logs greeter-service -n default -p default --env development --tail 50`. The audit log then shows the project creation and none of the reads. You get the same data, but you do not see how an agent uses the tools.
 
 ## What you should see
 
 - Both servers show as connected in your agent.
 - The agent names your Lab 1 service, its ComponentType and the environments it is bound to.
 - The log summary matches what you see in the portal.
-- The audit entries match the calls the agent made.
+- The audit log shows the agent's `agent-demo` creation under `service_mcp_client`, and none of its reads.
 
 ## If something fails
 
@@ -157,4 +165,4 @@ It covers prompts 1, 2, 4 and 5. For prompt 3: `occ component logs greeter-servi
 
 ## How it maps to OpenChoreo
 
-The agent is a user of the platform. It signs in through the same identity provider, it is authorized by the same roles and bindings, and what it does is recorded in the same audit log. Giving an agent access is a role binding like any other, so give it the least access that does the job.
+The agent is a user of the platform. It signs in through the same identity provider, it is authorized by the same roles and bindings, and the changes it makes are recorded in the same audit log. Giving an agent access is a role binding like any other, so give it the least access that does the job.

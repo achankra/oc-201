@@ -154,7 +154,7 @@ kubectl get authzrolebinding lab-developers -n default -o yaml
 occ authzrole list -n default
 ```
 
-The sandbox's occ is 1.2.0, which has no `auditlogs` command; it arrived in 1.3. Read the audit log in the console instead: open **Audit Logs** in the left menu and filter on the result. If your console has no Audit Logs page, this version does not record them; mark the step N/A. Evaluation is fail-closed: an allow needs at least one matching binding and no matching deny.
+The sandbox's occ is 1.2.0, which has no `auditlogs` command; it arrived in 1.3. The log records changes (create, update and delete), not reads. Read the audit log in the console instead: open **Audit Logs** in the left menu and filter on the result. If your console has no Audit Logs page, this version does not record them; mark the step N/A. Your new role and binding are changes, so they are there. Evaluation is fail-closed: an allow needs at least one matching binding and no matching deny. A deny blocks only the entitlement it is bound to; a user who gets an allow through another group still has access.
 
 ## Checkpoint
 

@@ -142,7 +142,7 @@ occ auditlogs --since 1d
 occ auditlogs --since 1d --result denied
 ```
 
-Evaluation is fail-closed: an allow needs at least one matching binding and no matching deny. The last command shows only the requests that were refused.
+The audit log records changes (create, update and delete) with the decision on each: your new role and binding are there. Reads are not recorded, not even denied ones, so the last command shows only refused changes and may be empty. Evaluation is fail-closed: an allow needs at least one matching binding and no matching deny. A deny blocks only the entitlement it is bound to; a user who gets an allow through another group still has access.
 
 ## Checkpoint
 

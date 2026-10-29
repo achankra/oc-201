@@ -80,7 +80,7 @@ sed "s#https://example.com/openchoreo-alerts#$WEBHOOK_URL#" \
 
 ### 4. Set up the SRE agent (OpenAI key only)
 
-The built-in SRE agent needs an OpenAI API key; usage is billed to your OpenAI account. In v1.3.1 it cannot use Claude: its image ships only the OpenAI client, and it relies on OpenAI structured output for its report. With a Claude API key or a Claude Code login instead, skip this step and use step 6, where Claude Code does the analysis through the MCP servers from Lab 4.
+The built-in SRE agent is off by default. It speaks the OpenAI API: it works with an OpenAI key, billed to your OpenAI account, or with another provider through an OpenAI-compatible gateway. It cannot use a Claude Code login. Without an OpenAI-compatible key, skip this step and use step 6, where Claude Code does the analysis through the MCP servers from Lab 4. On v1.3.1 it fails with OpenAI models from gpt-5.6 onward; v1.3.2, which this course uses, fixes that.
 
 ```bash
 cd ~/oc-201-labs/lab7-sre-agent
@@ -90,7 +90,7 @@ export RCA_MODEL=gpt-5.4
 ./scripts/setup-sre-agent.sh
 ```
 
-The script creates `rca-agent-secret` in `openchoreo-observability-plane`, upgrades the observability plane Helm release with `rca.enabled=true`, points the default ClusterObservabilityPlane at the agent, and waits for the `sre-agent` pod. It uses chart 1.3.1; set `CHART_VERSION` to override.
+The script creates `rca-agent-secret` in `openchoreo-observability-plane`, upgrades the observability plane Helm release with `rca.enabled=true`, points the default ClusterObservabilityPlane at the agent, and waits for the `sre-agent` pod. It uses chart 1.3.2; set `CHART_VERSION` to override.
 
 ### 5. Cause the alert and read the result
 

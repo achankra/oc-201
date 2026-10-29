@@ -84,7 +84,7 @@ Required fields are placeholders; optional fields are commented examples. For th
 
 > **Dry run first:** the block checks with a server-side dry run before it changes anything.
 
-The greeter sample, renamed `lab5-greeter` and pointed at `deployment/service-governed`:
+The greeter sample, renamed `lab5-greeter` and pointed at `deployment/service-governed`. The sample sets `autoDeploy: true`, which part E depends on; the field is off by default. Most validation runs after the apply, so a component can be accepted and still fail: the `wait` line and the component's status show the error.
 
 ```bash
 cd ~/oc-201-labs/lab5
@@ -93,7 +93,7 @@ curl -fsSL $BASE/from-image/go-greeter-service/greeter-service.yaml \
   | sed -e 's/ame: greeter-service/ame: lab5-greeter/' \
         -e 's#name: deployment/service$#name: deployment/service-governed#' \
   > lab5-component.yaml
-grep -n -E "name:|projectName" lab5-component.yaml
+grep -n -E "name:|projectName|autoDeploy" lab5-component.yaml
 kubectl apply --dry-run=server -f lab5-component.yaml
 kubectl apply -f lab5-component.yaml
 kubectl wait --for=condition=Ready component/lab5-greeter -n default --timeout=180s
@@ -163,19 +163,20 @@ kubectl get releasebinding lab5-greeter-development -n default \
 kubectl get deployment -A -l openchoreo.dev/component=lab5-greeter
 ```
 
-A new ComponentRelease appears, because a release snapshots the type. The binding shows which release development runs; with `autoDeploy: true` it moves to the new one and the Deployment goes to 2 replicas.
+A new ComponentRelease appears and the development binding moves to it, so the Deployment goes to 2 replicas. That happens only because `lab5-greeter` has `autoDeploy: true`. A type change alone creates no release: components without `autoDeploy`, which is off by default, keep their release until someone deploys again. If the type change were invalid, the error would show in the type's status, not when you apply it.
 
 ## Checkpoint
 
 - [ ] `occ clustercomponenttype list` shows `service-governed`
 - [ ] `lab5-greeter` deploys and answers through the gateway
-- [ ] A new ComponentRelease appears after the type change
+- [ ] A new ComponentRelease appears after the type change, because `lab5-greeter` has `autoDeploy: true`
 
 ## Troubleshooting
 
 - `A notification channel is mandatory for alert rules`: apply `~/oc-201-labs/lab7-sre-agent/manifests/notification-channel-webhook.yaml`, as in step 7.
 - Trait rejected: its name must be in the type's `allowedTraits`; run `grep -A5 allowedTraits ~/oc-201-labs/lab5/service-governed.yaml`.
-- Component rejected: the type requires at least one endpoint; run `grep -A4 endpoints ~/oc-201-labs/lab5/lab5-component.yaml`.
+- Component not Ready: errors show in its status, not at apply. Run `kubectl get component lab5-greeter -n default -o jsonpath='{.status.conditions}'`. The type requires at least one endpoint: `grep -A4 endpoints ~/oc-201-labs/lab5/lab5-component.yaml`.
+- No new release after the type change: run `kubectl get component lab5-greeter -n default -o jsonpath='{.spec.autoDeploy}'`; it must print `true`.
 - `ModuleNotFoundError: yaml`: run `source ~/oc-201-labs/.venv/bin/activate` and repeat the edit.
 - No new release: run `kubectl get component lab5-greeter -n default -o jsonpath='{.spec.componentType}'`; it must name `deployment/service-governed` with kind ClusterComponentType.
 

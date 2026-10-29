@@ -1,12 +1,12 @@
 # Lab 7: alert, incident and root cause
 
-An alert rule on `greeter-service` fires on log lines you inject, creates an incident, and something analyzes it: the built-in SRE agent with an OpenAI key, Claude Code through the OpenChoreo MCP servers, or a local stand-in with no model. This README follows part B of Lab 7 in the workbook. Run every block from a terminal; each one starts with the `cd` or lookup it needs.
+An alert rule on `greeter-service` fires on log lines you inject, creates an incident, and something analyzes it: the built-in SRE agent with an OpenAI-compatible key, Claude Code through the OpenChoreo MCP servers, or a local stand-in with no model. This README follows part B of Lab 7 in the workbook. Run every block from a terminal; each one starts with the `cd` or lookup it needs.
 
 | Path | Purpose |
 |---|---|
 | `manifests/notification-channel-webhook.yaml` | The default notification channel for `development`. Required: the alert-rule trait will not render without one |
 | `manifests/alert-rule-trait.yaml` | The alert rule: more than 3 `lab7-error` lines in 5 minutes. The workbook applies the same values as a JSON patch |
-| `manifests/release-binding-incident.yaml` | The per-environment setting that creates incidents and, with an OpenAI key, runs the SRE agent |
+| `manifests/release-binding-incident.yaml` | The per-environment setting that creates incidents and, with the SRE agent set up, has it analyze them |
 | `scripts/setup-sre-agent.sh` | Creates the key secret, enables the SRE agent, registers it with the control plane and waits for the pod |
 | `simulate/simulate_rca.py` | Local stand-in for the analysis. No model, no key |
 | `simulate/sample-incident-logs.txt` | A sample log for the stand-in |
@@ -15,7 +15,7 @@ An alert rule on `greeter-service` fires on log lines you inject, creates an inc
 
 - The cluster from the pre-work, installed with `--with-observability`.
 - `greeter-service` from Lab 1, running in `development`.
-- One of: an OpenAI API key (usage is billed to your account), Claude Code connected to both MCP servers as in Lab 4, or nothing (the stand-in).
+- One of: an OpenAI API key (usage is billed to your account) or another provider behind an OpenAI-compatible gateway, Claude Code connected to both MCP servers as in Lab 4, or nothing (the stand-in).
 
 ## 1. Create the notification channel, then attach the alert rule
 
@@ -65,7 +65,7 @@ kubectl patch releasebinding greeter-service-development -n default --type=merge
 
 ## 3. Set up the SRE agent (OpenAI key only)
 
-In v1.3.1 the SRE agent cannot use Claude: its image ships only the OpenAI client, and it relies on OpenAI structured output for its report. Without an OpenAI key, skip this step.
+The SRE agent is off by default. It speaks the OpenAI API: it works with an OpenAI key, or with another provider through an OpenAI-compatible gateway. It cannot use a Claude Code login. Without an OpenAI-compatible key, skip this step and use step 5. On v1.3.1 the agent fails with OpenAI models from gpt-5.6 onward; v1.3.2, which this course uses, fixes that.
 
 ```
 cd ~/oc-201-labs/lab7-sre-agent
@@ -82,7 +82,7 @@ The script:
 3. Points the default `ClusterObservabilityPlane` at the agent (`rcaAgentURL`).
 4. Waits for the `sre-agent` pod.
 
-It uses chart 1.3.1, the version your cluster runs.
+It uses chart 1.3.2, the version your cluster runs. Set `CHART_VERSION` if your cluster runs another version.
 
 ## 4. Cause the alert
 

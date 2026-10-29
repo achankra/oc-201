@@ -75,10 +75,10 @@ diff default-project-type.yaml governed-project-type.yaml
 
 ### 6. Grant the agent access, check, then apply
 
-The data plane agent creates everything a project type renders, and out of the box it may not manage ResourceQuotas. Without this grant the cell apply fails with `resourcequotas ... is forbidden` and none of the type's resources land. A project type can only stamp out what the agent is allowed to manage. If `create` says `AlreadyExists`, the grant is already there.
+The cluster agent creates everything a project type renders, and out of the box it cannot manage ResourceQuotas, on any install, not only this one. Without this grant the cell apply fails with `resourcequotas ... is forbidden` and none of the type's resources land. A project type can only stamp out what the agent is allowed to manage. If `create` says `AlreadyExists`, the grant is already there.
 
 ```bash
-# once per cluster: let the data plane agent manage quotas
+# once per cluster: let the cluster agent manage quotas
 kubectl create clusterrole lab-cluster-agent-quotas \
   --verb=get,list,watch,create,update,patch,delete --resource=resourcequotas,limitranges
 kubectl create clusterrolebinding lab-cluster-agent-quotas \
@@ -187,7 +187,7 @@ kubectl get networkpolicy openchoreo-greeter-governed -n $NS -o yaml | grep -A20
 kubectl get pods -n kube-system -l k8s-app=cilium
 ```
 
-With Cilium, the cell diagram's runtime view shows the gateway flow as forwarded and the curl-test flow as dropped. `No resources found` means the module is not installed: the default k3d install uses flannel, and the module needs Cilium as the cluster's network plugin, which means recreating the cluster. Skip the view; the next step uses what you just saw.
+With Cilium and a metrics module, the cell diagram's runtime view shows the gateway flow as forwarded and the curl-test flow as dropped. `No resources found` means the Cilium module is not installed: the default k3d install uses flannel, and the module needs Cilium as the cluster's network plugin, which means recreating the cluster. Skip the view; the next step uses what you just saw.
 
 ### 11. Compare the two lists
 
@@ -203,7 +203,7 @@ printf '%s\n' 'gateway -> greeter-governed' > my-observed.txt
 echo "exit status: $?"
 ```
 
-On the samples the script prints connections on both sides, observed but never declared, and declared but never observed. On your files every observed connection was declared, so `--strict` exits 0. `curl-test -> greeter-governed` is not in the observed list because the policy refused it. An undeclared connection that works would be a gap in the cell's policy: declare it, or tighten the policy so it stops.
+On the samples the script prints connections on both sides, observed but never declared, and declared but never observed. On your files every observed connection was declared, so `--strict` exits 0. `curl-test -> greeter-governed` is not in the observed list because the policy refused it. An undeclared connection that works would be a gap. Declaring it documents it but does not block or allow anything: the ingress policy comes from each endpoint's visibility, not from declared dependencies, and it covers ingress only. To stop the connection, narrow the endpoint's visibility or add a policy in the ProjectType.
 
 ## Checkpoint
 

@@ -2,7 +2,7 @@
 
 *OC-201 workbook, local install edition. Using the sandbox instead? See [WORKBOOK-sandbox.md](WORKBOOK-sandbox.md).*
 
-**Goal:** A running local OpenChoreo v1.3.1 cluster, the occ CLI, a signed-in portal, and the lab code on your machine. Every tool is installed in the steps below.
+**Goal:** A running local OpenChoreo v1.3.2 cluster, the occ CLI, a signed-in portal, and the lab code on your machine. Every tool is installed in the steps below.
 
 | Tool | Minimum | Check |
 |---|---|---|
@@ -10,7 +10,7 @@
 | k3d | v5.8+ | `k3d version` |
 | kubectl | v1.34+ | `kubectl version --client` |
 | Helm | v3.12+ | `helm version` |
-| occ | v1.3.1 | `occ version` |
+| occ | v1.3.2 | `occ version` |
 | Git | any recent version | `git --version` |
 | Python | 3.9+ | `python3 --version` |
 | OPA | any recent version, for Lab 3 | `opa version` |
@@ -158,15 +158,15 @@ occ is the OpenChoreo CLI. It does not need the cluster to install. Paste the bl
 
 ```bash
 # Apple silicon
-BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.1
-curl -L $BASE/occ_v1.3.1_darwin_arm64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
+BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.2
+curl -L $BASE/occ_v1.3.2_darwin_arm64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
 occ version
 ```
 
 ```bash
 # Intel Mac
-BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.1
-curl -L $BASE/occ_v1.3.1_darwin_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
+BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.2
+curl -L $BASE/occ_v1.3.2_darwin_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
 occ version
 ```
 
@@ -174,16 +174,16 @@ occ version
 
 ```bash
 # x64. On ARM, replace amd64 with arm64
-BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.1
-curl -L $BASE/occ_v1.3.1_linux_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
+BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.2
+curl -L $BASE/occ_v1.3.2_linux_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
 occ version
 ```
 
 **Windows, in the WSL 2 Ubuntu terminal**
 
 ```bash
-BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.1
-curl -L $BASE/occ_v1.3.1_linux_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
+BASE=https://github.com/openchoreo/openchoreo/releases/download/v1.3.2
+curl -L $BASE/occ_v1.3.2_linux_amd64.tar.gz | tar -xz && sudo mv occ /usr/local/bin/
 occ version
 ```
 
@@ -215,12 +215,12 @@ curl -sI https://ghcr.io | head -1
 
 ### 5. Create the cluster and install OpenChoreo
 
-One command creates a k3d cluster named `openchoreo` and installs the control, data, workflow and observability planes at v1.3.1. Allow several minutes on a first run. Run it in the terminal where you ran the `export` line.
+One command creates a k3d cluster named `openchoreo` and installs the control, data, workflow and observability planes at v1.3.2. Allow several minutes on a first run. Run it in the terminal where you ran the `export` line.
 
 ```bash
 URL=https://raw.githubusercontent.com/openchoreo/openchoreo/release-v1.3/install/k3d
 curl -fsSL $URL/k3d-install.sh | bash -s -- \
-  --version v1.3.1 --with-build --with-observability
+  --version v1.3.2 --with-build --with-observability
 ```
 
 ### 6. Check the cluster
@@ -297,7 +297,7 @@ Each tool signs you in the first time it runs. Cursor and VS Code are apps from 
 - [ ] `docker info` works and the preflight checks came back clean
 - [ ] `kubectl get nodes` shows the node Ready; pods are Running or Completed
 - [ ] The portal loads and you can sign in with admin@openchoreo.dev / Admin@123
-- [ ] `occ version` prints a 1.3.1 CLI version
+- [ ] `occ version` prints a 1.3.2 CLI version
 - [ ] `ls ~/oc-201-labs` lists the lab folders and the pyyaml check prints `pyyaml ok`
 - [ ] Your AI coding agent starts and signs in
 

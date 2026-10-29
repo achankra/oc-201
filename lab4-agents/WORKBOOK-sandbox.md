@@ -118,22 +118,26 @@ List the release bindings for greeter-service and tell me which release each env
 ```
 
 ```text
-Show the audit log entries for the calls you just made. Use only the OpenChoreo MCP tools.
+Create a project named agent-demo in the default namespace, using the default deployment pipeline and the default project type. Use only the OpenChoreo MCP tools.
 ```
 
-Your agent shows each tool call, for example `Called openchoreo-cp 4 times`. Prompts 1, 2 and 4 use tools on `openchoreo-cp`; prompts 3 and 5 use tools on `openchoreo-obs`. If you see `kubectl` instead, stop the agent with Esc and go back to step 4.
+```text
+Show the audit log entries from the last hour. Which of your calls appear, and which do not? Use only the OpenChoreo MCP tools.
+```
+
+Your agent shows each tool call, for example `Called openchoreo-cp 4 times`. Prompts 1, 2, 4 and 5 use tools on `openchoreo-cp`; prompts 3 and 6 use tools on `openchoreo-obs`. Prompt 5 is the only one that changes something. If you see `kubectl` instead, stop the agent with Esc and go back to step 4.
 
 ### 7. Compare the entries with the calls
 
-The sandbox's occ is 1.2.0, which has no `auditlogs` command; it arrived in 1.3. Read the audit log in the console instead: open **Audit Logs** in the left menu and filter on the result. If your console has no Audit Logs page, this version does not record them; mark the step N/A.
+The sandbox's occ is 1.2.0, which has no `auditlogs` command; it arrived in 1.3. The log records changes (create, update and delete), not reads. Read the audit log in the console instead: open **Audit Logs** in the left menu and filter on the result. If your console has no Audit Logs page, this version does not record them; mark the step N/A.
 
-Audit logs record calls made through the REST API and through MCP. The entries should match the agent's calls from prompts 1 to 4. Note which identity the entries show: the sandbox chose the credentials its MCP setup uses. The agent is an identity of its own, authorized by its own role binding, so give it the least access that does the job.
+The audit log records changes only: create, update and delete. Prompt 5's project creation should be there; the reads from the other prompts are not, not even a denied read. Note which identity the entry shows: the sandbox chose the credentials its MCP setup uses, and they may carry broad access. In a real platform, bind the agent's client to the narrowest role that does the job, as you bound a team in Lab 2. Remove the demo project when you are done: `kubectl delete project agent-demo -n default`.
 
 ### 8. No agent available
 
 > **Verify:** flags can differ between versions. If this fails, run the command with `--help`.
 
-The same reads with occ and kubectl, covering prompts 1, 2, 4 and 5, plus the logs for prompt 3:
+The same calls with occ and kubectl, covering prompts 1, 2 and 4 to 6, plus the logs for prompt 3. The script creates the `agent-demo` project with `occ apply`, so the audit log has an entry to show:
 
 ```bash
 cd ~/oc-201-labs/lab4-agents
@@ -141,7 +145,7 @@ cd ~/oc-201-labs/lab4-agents
 occ component logs greeter-service -n default -p default --env development --tail 50
 ```
 
-Step 5 of the script prints `(command failed)` in the sandbox, because occ 1.2.0 has no `auditlogs`. Read those entries in the console's Audit Logs page instead.
+The audit step of the script prints `(command failed)` in the sandbox, because occ 1.2.0 has no `auditlogs`. Read the `agent-demo` creation in the console's Audit Logs page instead; the reads are not recorded.
 
 ### 9. Stretch: skills on and off
 
@@ -168,7 +172,7 @@ npx skills remove openchoreo-developer openchoreo-platform-engineer
 - [ ] The agent's answers come from MCP tool calls, not `kubectl`
 - [ ] The agent names `greeter-service`, its ComponentType and the environments it is bound to
 - [ ] The log summary matches what you see in the portal
-- [ ] The audit entries match the calls the agent made
+- [ ] The audit log shows the agent's `agent-demo` project creation under `service_mcp_client`, and none of its reads
 
 ## Troubleshooting
 

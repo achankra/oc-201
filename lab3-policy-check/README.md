@@ -67,7 +67,7 @@ The default project type creates only the namespace, so the cells have no quota 
 
 ## C. Author a governed project type
 
-The data plane agent creates everything a project type renders. Out of the box it may not manage ResourceQuotas, and the cell then fails with `resourcequotas ... is forbidden`. Grant it once per cluster; `AlreadyExists` means the grant is there.
+The cluster agent creates everything a project type renders. Out of the box it cannot manage ResourceQuotas, on any install, and the cell then fails with `resourcequotas ... is forbidden`. Grant it once per cluster; `AlreadyExists` means the grant is there.
 
 ```
 kubectl create clusterrole lab-cluster-agent-quotas \
@@ -173,4 +173,4 @@ On the samples the script prints three groups: on both sides, observed but never
 
 ## How it maps to OpenChoreo
 
-In a cluster the same rules run at admission, before an object is created. The policy limits what may be submitted. The cell limits what a team can consume and reach. A project type can only stamp out what the data plane agent is allowed to manage, so its permissions are part of your governance design.
+In a cluster the same rules run at admission, before an object is created. The policy limits what may be submitted. The cell limits what a team can consume and reach. A project type can only stamp out what the cluster agent is allowed to manage, so its permissions are part of your governance design.

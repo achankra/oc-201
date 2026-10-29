@@ -45,7 +45,7 @@ For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
 | Deploy / promote | `occ component deploy greeting-service -n default -p default --to staging` |
 | Logs | `occ component logs greeter-service -n default -p default --env development --tail 50` |
 | Shell in a component | `occ component exec greeting-service -n default -p default --env development` |
-| Audit | `occ auditlogs --since 7d --result denied` |
+| Audit (changes only) | `occ auditlogs --since 7d` · `--result denied` for refused changes |
 | Cell namespace of a component | `kubectl get deployment -A -l openchoreo.dev/component=greeter-service` |
 | MCP servers | `~/oc-201-labs/lab4-agents/scripts/register-claude-code-token.sh` · `claude mcp list` · `/mcp` |
 | Skills | `npx skills add openchoreo/skills --skill openchoreo-developer` |
@@ -57,9 +57,9 @@ For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
 | Object | Becomes |
 |---|---|
 | Component | → ComponentRelease (immutable) → ReleaseBinding → RenderedRelease → Deployment, Service, HTTPRoute |
-| Project | → ProjectRelease → ProjectReleaseBinding → cell namespace, quota, policies |
+| Project | → ProjectRelease (created by the platform) → ProjectReleaseBinding (one per environment; not created for a project applied with `kubectl`, and moved to a new ProjectRelease only when you move it) → cell namespace, quota, policies |
 | Alert rule | Notification channel in the environment → Trait on the component → ObservabilityAlertRule → incident (set per environment in the ReleaseBinding) → SRE agent report, or Claude Code through MCP |
-| Gateway URL | `http://{env}-{namespace}.openchoreoapis.localhost:19080/{component}-{endpoint}/{path}` |
+| Gateway URL | `http://{env}-{namespace}.openchoreoapis.localhost:19080/{component}-{endpoint}/{path}` for service components with external endpoints. The URL actually published is in the ReleaseBinding's `status.endpoints` |
 | MCP servers | `http://api.openchoreo.localhost:8080/mcp` · `http://observer.openchoreo.localhost:11080/mcp` |
 
 ### Sandbox differences
@@ -68,7 +68,6 @@ For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
 |---|---|
 | Gateway | `http://$GWADDR` with `Host: {env}-{namespace}.demo.openchoreo.wso2.com`, path `/{component}-{endpoint}/{path}` |
 | MCP servers | `https://api.demo.openchoreo.wso2.com/mcp` · `https://observer.demo.openchoreo.wso2.com/mcp` |
-| Audit | Console, Audit Logs page (occ 1.2 has no `auditlogs`) |
 | Call a workload | `curl -H "Host: $DEVHOST" http://$GWADDR/greeter-service-http/greeter/greet` |
 
 

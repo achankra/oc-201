@@ -134,25 +134,31 @@ List the release bindings for greeter-service and tell me which release each env
 ```
 
 ```text
-Show the audit log entries for the calls you just made. Use only the OpenChoreo MCP tools.
+Create a project named agent-demo in the default namespace, using the default deployment pipeline and the default project type. Use only the OpenChoreo MCP tools.
 ```
 
-Your agent shows each tool call, for example `Called openchoreo-cp 4 times`. Prompts 1, 2 and 4 use tools on `openchoreo-cp`; prompts 3 and 5 use tools on `openchoreo-obs`. If you see `kubectl` instead, stop the agent with Esc and go back to step 4.
+```text
+Show the audit log entries from the last hour. Which of your calls appear, and which do not? Use only the OpenChoreo MCP tools.
+```
+
+Your agent shows each tool call, for example `Called openchoreo-cp 4 times`. Prompts 1, 2, 4 and 5 use tools on `openchoreo-cp`; prompts 3 and 6 use tools on `openchoreo-obs`. Prompt 5 is the only one that changes something. If you see `kubectl` instead, stop the agent with Esc and go back to step 4.
 
 ### 7. Compare the entries with the calls
 
 ```bash
 occ auditlogs --since 1h
-occ auditlogs --since 1h --result denied
+occ project list -n default
+# remove the demo project when you are done
+kubectl delete project agent-demo -n default
 ```
 
-Audit logs record calls made through the REST API and through MCP. The entries should match the agent's calls from prompts 1 to 4. With the token route the caller is `service_mcp_client`, not your user: the agent is an identity of its own, authorized by its own role binding. Giving an agent access is a role binding like any other, so give it the least access that does the job. A denied call means the role bound to that identity does not allow it; bind one that does, as in Lab 2.
+The audit log records changes only: create, update and delete. So prompt 5's project creation is there, and the reads from prompts 1 to 4 and 6 are not, not even a denied read. With the token route the caller is `service_mcp_client`, not your user: the agent is an identity of its own. On this install that client has the `admin` role, so the agent could have changed anything. In a real platform, bind the agent's client to the narrowest role that does the job, as you bound a team in Lab 2. The delete runs through `kubectl`, so it goes around the OpenChoreo API and leaves no audit entry: run `occ auditlogs --since 10m` to see.
 
 ### 8. No agent available
 
 > **Verify:** flags can differ between versions. If this fails, run the command with `--help`.
 
-The same reads with occ and kubectl, covering prompts 1, 2, 4 and 5, plus the logs for prompt 3:
+The same calls with occ and kubectl, covering prompts 1, 2 and 4 to 6, plus the logs for prompt 3. The script creates the `agent-demo` project with `occ apply`, so the audit log has an entry to show:
 
 ```bash
 cd ~/oc-201-labs/lab4-agents
@@ -160,7 +166,7 @@ cd ~/oc-201-labs/lab4-agents
 occ component logs greeter-service -n default -p default --env development --tail 50
 ```
 
-The occ calls appear in the audit log; the kubectl calls go to the Kubernetes API and do not.
+Only the project creation appears in the audit log: it records changes, not reads. The kubectl calls go to the Kubernetes API and would not appear even if they changed something.
 
 ### 9. Stretch: skills on and off
 
@@ -187,7 +193,7 @@ npx skills remove openchoreo-developer openchoreo-platform-engineer
 - [ ] The agent's answers come from MCP tool calls, not `kubectl`
 - [ ] The agent names `greeter-service`, its ComponentType and the environments it is bound to
 - [ ] The log summary matches what you see in the portal
-- [ ] The audit entries match the calls the agent made
+- [ ] The audit log shows the agent's `agent-demo` project creation under `service_mcp_client`, and none of its reads
 
 ## Troubleshooting
 
@@ -196,7 +202,8 @@ npx skills remove openchoreo-developer openchoreo-platform-engineer
 - `already exists in user config`: an old copy of the script. The current scripts replace earlier registrations; or run `claude mcp remove openchoreo-cp -s user` and `claude mcp remove openchoreo-obs -s user` first.
 - Servers registered but missing in another folder: they were registered for one folder only. Run the token script; it registers them for your user.
 - The agent runs `kubectl`: the servers are not connected in that session. Restart Claude Code and check `/mcp`.
-- A call is denied: run `occ auditlogs --since 1h --result denied` and bind a role that allows the action, as in Lab 2.
+- A call is denied: bind a role that allows the action, as in Lab 2. Denied changes appear in `occ auditlogs --since 1h --result denied`; denied reads are not recorded.
+- The agent says it has no tool to create a project: ask it to list the `openchoreo-cp` tools that create or update something, and use one of those for prompt 5.
 - Tools worked and then stop: the token expired. Run the token script again (24-hour token); for Codex, run the `export OPENCHOREO_MCP_TOKEN=...` lines again.
 - Log prompt returns nothing: run `kubectl get pods -n openchoreo-observability-plane`.
 

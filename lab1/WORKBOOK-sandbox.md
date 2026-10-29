@@ -110,6 +110,8 @@ The last command prints the namespace the objects live in. In Lab 3 you will see
 URL=http://$GWADDR/greeter-service-http
 curl -H "Host: $DEVHOST" $URL/greeter/greet
 curl -H "Host: $DEVHOST" "$URL/greeter/greet?name=OpenChoreo"
+kubectl get releasebinding greeter-service-development -n default \
+  -o jsonpath='{.status.endpoints}{"\n"}'
 ```
 
 The sandbox publishes `development-default.demo.openchoreo.wso2.com`, but its public URL sits behind a browser check, so the terminal calls the gateway inside the cluster and names the host in a `Host` header. The path follows `/{component}-{endpoint}/{path}`. The answers are `Hello, Stranger!` and `Hello, OpenChoreo!`.

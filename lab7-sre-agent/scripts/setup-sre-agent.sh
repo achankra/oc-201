@@ -2,10 +2,10 @@
 # Set up the OpenChoreo SRE agent on the local k3d install.
 #
 # Required:
-#   OPENAI_API_KEY   your OpenAI API key
+#   OPENAI_API_KEY   your OpenAI API key, or a key for an OpenAI-compatible gateway
 #   RCA_MODEL        the model name, for example gpt-5.4
 # Optional:
-#   CHART_VERSION    chart version of the observability plane (default 1.3.1)
+#   CHART_VERSION    chart version of the observability plane (default 1.3.2)
 #   RCA_AGENT_URL    address registered with the control plane
 #                    (default http://rca-agent.openchoreo.localhost:11080)
 #
@@ -14,7 +14,7 @@ set -euo pipefail
 
 NS="openchoreo-observability-plane"
 CHART="oci://ghcr.io/openchoreo/helm-charts/openchoreo-observability-plane"
-CHART_VERSION="${CHART_VERSION:-1.3.1}"
+CHART_VERSION="${CHART_VERSION:-1.3.2}"
 RCA_AGENT_URL="${RCA_AGENT_URL:-http://rca-agent.openchoreo.localhost:11080}"
 
 : "${OPENAI_API_KEY:?Set OPENAI_API_KEY to your OpenAI API key}"

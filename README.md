@@ -1,6 +1,6 @@
 # OC-201 lab code
 
-Lab code for OC-201, Cloud Native Platform Engineering with OpenChoreo, from the Platform Engineering Academy by Platformetrics in collaboration with WSO2/OpenChoreo. Each folder belongs to one lab in the workbook. You run it on your own machine, next to the k3d cluster with OpenChoreo v1.3.1 from the pre-work.
+Lab code for OC-201, Cloud Native Platform Engineering with OpenChoreo, from the Platform Engineering Academy by Platformetrics in collaboration with WSO2/OpenChoreo. Each folder belongs to one lab in the workbook. You run it on your own machine, next to the k3d cluster with OpenChoreo v1.3.2 from the pre-work.
 
 **Start with [WORKBOOK.md](WORKBOOK.md).** Each module folder has two editions of its step-by-step workbook: `WORKBOOK-local.md` for OpenChoreo on your own machine, the main path for the course, and `WORKBOOK-sandbox.md` for the WSO2 OpenChoreo Sandbox. Every code block has a copy button.
 
@@ -50,21 +50,21 @@ Some steps write files into these folders as you go, such as `lab3-project.yaml`
 
 - Python 3.9 or newer, with PyYAML in `.venv` for labs 5, 6 and 7
 - `kubectl` and `helm` pointed at the k3d cluster
-- The `occ` CLI, v1.3.1, from github.com/openchoreo/openchoreo/releases/tag/v1.3.1
+- The `occ` CLI, v1.3.2, from github.com/openchoreo/openchoreo/releases/tag/v1.3.2. v1.3.2 has no API changes from v1.3.1 and includes the fix for the eMudhra emSign root CA security issue
 - OPA for lab 3: `brew install opa`
 - Node.js 18 or newer, for the skills in lab 4
 - An AI coding agent for lab 4. The workbook uses Claude Code; Codex CLI, Cursor, Gemini CLI, OpenCode CLI and VS Code with GitHub Copilot also work. Without one, use `lab4-agents/no-agent/run-reads.sh`.
-- For the SRE agent in lab 7, an OpenAI API key. Without one, use Claude Code through the MCP servers, or `lab7-sre-agent/simulate/`.
+- For the SRE agent in lab 7, an OpenAI API key, or another provider behind an OpenAI-compatible gateway. Without one, use Claude Code through the MCP servers, or `lab7-sre-agent/simulate/`.
 
-## Known issues on v1.3.1
+## Known issues on v1.3
 
-The labs already work around each of these. If you see one of the symptoms, the last column says what fixes it and which lab covers it.
+The course runs on v1.3.2. Every row holds on v1.3.1 and v1.3.2 unless it says otherwise. The labs already work around each of these. If you see one of the symptoms, the last column says what fixes it and which lab covers it.
 
 | Symptom | Cause | Fix, and where |
 |---|---|---|
 | zsh runs `#` lines as commands | Comments are off in interactive zsh | `setopt interactivecomments`, pre-work |
-| A new project gets no cell namespaces and nothing deploys into it | Cells come only from ProjectReleaseBindings | `create-governed-project.sh` creates one per pipeline environment, Lab 3 |
-| `resourcequotas "cell-quota" is forbidden` | The data plane agent cannot manage ResourceQuotas | ClusterRole and binding for `cluster-agent-dataplane`, Lab 3 part C |
+| A new project gets no cell namespaces and nothing deploys into it | Cells come only from ProjectReleaseBindings, and a project applied with `kubectl` gets none | `create-governed-project.sh` creates one per pipeline environment, Lab 3 |
+| `resourcequotas "cell-quota" is forbidden` | The cluster agent cannot manage ResourceQuotas on any install, out of the box | ClusterRole and binding for `cluster-agent-dataplane`, Lab 3 part C |
 | A pod outside the cell cannot reach a component | OpenChoreo puts an ingress NetworkPolicy on every component | Expected; call through the gateway. Lab 3 part E and Lab 6 part B |
 | `pods "curl-test" already exists` | A test pod from an earlier run | Each block deletes it first with `--ignore-not-found` |
 | Claude Code browser sign-in finishes but `/mcp` still says "needs authentication" | OAuth with the bundled identity provider does not complete in recent Claude Code versions | `register-claude-code-token.sh`, service token, Lab 4 |
@@ -74,13 +74,17 @@ The labs already work around each of these. If you see one of the symptoms, the 
 | The route dry-run fails against the gateway | `kubectl get gateways -A` lists one per plane; components use the data plane's | `GW_NS=openchoreo-data-plane`, Lab 6 |
 | `configs/canary-broken.yaml` not found | The broken copy is generated, not shipped | Each block creates it with `sed` first; or run `cp reference/canary-broken.yaml configs/` in `lab6-traffic-control`, Lab 6 |
 | `/proc/net/tcp` shows no listener | The greeter listens on an IPv6 socket | Read `/proc/net/tcp6`; port 9090 is `2382`, Lab 6 |
-| No `sre-agent` pod with a Claude key | The SRE agent supports OpenAI only | Claude Code as the SRE through MCP, Lab 7 |
+| No `sre-agent` pod with a Claude key | The SRE agent speaks the OpenAI API; it works with OpenAI, or with another provider through an OpenAI-compatible gateway, not with a Claude key or login | An OpenAI-compatible key, or Claude Code as the SRE through MCP, Lab 7 |
+| The SRE agent fails with a newer OpenAI model | On v1.3.1, models from gpt-5.6 onward fail | Use v1.3.2, which fixes it, or `RCA_MODEL=gpt-5.4` as Lab 7 does |
+| The Lab 4 audit log shows none of the agent's reads | The audit log records changes only (create, update, delete), not reads, even denied ones | Expected; prompt 5 creates a project so there is an entry to find, Lab 4 |
+| A type change creates no new release | Only components with `autoDeploy: true` move to a new release on their own; it is off by default | The Lab 5 component sets it, Lab 5 part E |
+| A component or type applies cleanly but does not work | Most validation errors show in the object's status, not at apply | `kubectl get <kind> <name> -o jsonpath='{.status.conditions}'`, Labs 3 and 5 |
 | The live SLO run says `payments-api` | The sample SLO names a sample service | Score against `slo-greeter.yaml`, Lab 7 stretch |
 
 ## Good to know
 
 - Your output will not match the READMEs character for character. Names, timestamps and generated IDs differ on every machine, and the canary in Lab 6 routes requests at random.
 - The identity provider in Lab 2 signs its tokens with a secret written in its source code. That is fine for a demo on your own machine and never acceptable in a real system. It uses ports 8081 and 8082, so stop anything already using them before Lab 2.
-- On the local install, the wirelogs and the runtime view of the cell diagram stay empty. They need the Cilium network plugin, which the local install does not include. The labs show the same results with `kubectl`.
-- In Lab 4 your AI agent connects as `service_mcp_client`, which has the `admin` role on the local install. The audit log records the agent's calls under that name, not yours. On a real platform, give an agent the narrowest role that does the job.
+- On the local install, the wirelogs and the runtime view of the cell diagram stay empty. Wirelogs need the Cilium network plugin, which the local install does not include, and the runtime view also needs a metrics module. Wirelogs show traffic only from the moment you open them. The labs show the same results with `kubectl`.
+- In Lab 4 your AI agent connects as `service_mcp_client`, which has the `admin` role on the local install. The audit log records the changes the agent makes under that name, not yours; it does not record reads. On a real platform, give an agent the narrowest role that does the job.
 - If you use an API key in Lab 4 or Lab 7, never commit it to a repository.

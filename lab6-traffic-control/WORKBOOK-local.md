@@ -109,7 +109,7 @@ The default pipeline allows development to staging, then staging to production.
 
 ### 8. Read a healthy request
 
-Wirelogs are the flow records Cilium keeps for traffic between workloads, each with a source, a destination and a verdict: forwarded or dropped. They need the Cilium network module (see Lab 3, step 10). Check, then make a request:
+Wirelogs are the flow records Cilium keeps for traffic between workloads, each with a source, a destination and a verdict: forwarded or dropped. They need the Cilium network module (see Lab 3, step 10). They show traffic only from the moment you open them, not earlier requests. Check for the module, open the component's wirelogs in the portal, then make the request:
 
 ```bash
 kubectl get pods -n kube-system -l k8s-app=cilium
@@ -120,7 +120,7 @@ PATH_PREFIX=$(kubectl get httproute -A -l openchoreo.dev/component=greeting-serv
 curl -i "http://${GW_HOST}:19080${PATH_PREFIX}/greeter/greet"
 ```
 
-With Cilium, find the request in the component's wirelogs in the portal. Without it, the commands in the next step show the same three cases from the Kubernetes side.
+With Cilium, the request appears in the wirelogs you opened. Without it, the commands in the next step show the same three cases from the Kubernetes side.
 
 ### 9. Cause three failures and compare them
 
@@ -160,7 +160,7 @@ kubectl logs curl-test -n default
 kubectl delete pod curl-test -n default
 ```
 
-Case 3 is refused by the ingress policy OpenChoreo puts on every component, as in Lab 3. A dropped flow points at a network policy. A forwarded flow with a failing response points at the application. The platform may scale the Deployment back up by itself after case 2; that is the reconciler restoring the declared state.
+Keep the wirelogs open while you run each case; a flow from before you opened them does not appear. Case 3 is refused by the ingress policy OpenChoreo puts on every component, as in Lab 3. A dropped flow points at a network policy. A forwarded flow with a failing response points at the application. The platform may scale the Deployment back up by itself after case 2; that is the reconciler restoring the declared state.
 
 ## C. Diagnose with the web shell
 

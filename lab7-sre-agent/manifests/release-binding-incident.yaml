@@ -4,7 +4,7 @@
 # enabled: the rule runs in this environment
 # incident.enabled: an incident is created when the rule fires
 # incident.triggerAiRca: the built-in SRE agent analyzes the incident.
-#   It needs an OpenAI API key. Without one, set it to false and use Claude Code
+#   It needs the SRE agent, which is off by default and needs an OpenAI-compatible key. Without one, set it to false and use Claude Code
 #   through the MCP servers, or the local stand-in in simulate/.
 spec:
   traitEnvironmentConfigs:
