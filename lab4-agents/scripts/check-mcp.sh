@@ -24,7 +24,9 @@ done
 
 if [ "$status" -ne 0 ]; then
   echo
-  echo "At least one server did not answer. Check that the cluster is running and that"
-  echo "the control plane and observability plane are installed."
+  echo "At least one server did not answer. If both failed, the cluster is probably not"
+  echo "running: start Docker (colima start on a Mac) and k3d cluster start openchoreo."
+  echo "The steps are in the README at the root of the repository, under"
+  echo "\"When the cluster does not start or answer\"."
 fi
 exit "$status"

@@ -56,12 +56,98 @@ Some steps write files into these folders as you go, such as `lab3-project.yaml`
 - An AI coding agent for lab 4. The workbook uses Claude Code; Codex CLI, Cursor, Gemini CLI, OpenCode CLI and VS Code with GitHub Copilot also work. Without one, use `lab4-agents/no-agent/run-reads.sh`.
 - For the SRE agent in lab 7, an OpenAI API key, or another provider behind an OpenAI-compatible gateway. Without one, use Claude Code through the MCP servers, or `lab7-sre-agent/simulate/`.
 
+## When the cluster does not start or answer
+
+After a restart, a sleep or a Docker restart, the cluster may be stopped even though nothing reports an error. The signs: `The connection to the server 127.0.0.1 was refused`, `Cannot connect to the Docker daemon`, the portal does not load, or `./scripts/check-mcp.sh` in Lab 4 prints `NO ANSWER` for both servers.
+
+Find where it stops:
+
+```
+docker info > /dev/null && echo "Docker OK" || echo "Docker is not running"
+k3d cluster list
+kubectl get nodes
+curl -s -o /dev/null -w "API %{http_code}\n" http://api.openchoreo.localhost:8080/
+```
+
+**Docker is not running.** Start it, then the cluster, and wait for the control plane:
+
+```
+# macOS, Apple silicon. Intel Mac: colima start --cpu 4 --memory 8
+colima start --vm-type=vz --vz-rosetta --cpu 4 --memory 8
+# Linux: sudo systemctl start docker. Windows: open Docker Desktop
+k3d cluster start openchoreo
+kubectl wait -n openchoreo-control-plane --for=condition=available --timeout=300s deployment --all
+```
+
+**Docker runs, but `kubectl get nodes` fails or shows NotReady.** Run `k3d cluster start openchoreo`, wait a minute, and check again.
+
+**`k3d cluster start` fails with `Bind for 0.0.0.0:8080 failed: port is already allocated`.** Something else took port 8080 while the cluster was stopped, so the cluster's load balancer cannot start, and `kubectl` is then refused on port 6550. Find what holds the port:
+
+```
+docker ps --format '{{.Names}}\t{{.Ports}}' | grep 8080
+lsof -nP -iTCP:8080 -sTCP:LISTEN
+```
+
+Stop that container with `docker stop NAME`, or quit that program (`kill PID` with the PID `lsof` printed). Then run `k3d cluster start openchoreo` again. The cluster also uses ports 6550, 11080 and 19080; the same steps apply if one of them is named.
+
+**The nodes are Ready, but the API line prints `000`.** Some pods have not come back yet. List them:
+
+```
+kubectl get pods -A | grep -v -E 'Running|Completed'
+```
+
+Wait a few minutes and run it again; the list should shrink to nothing. A pod that stays in `CrashLoopBackOff` or `Pending` usually means Docker has too little memory: give it at least 8 GB, as in the pre-work, and restart Docker.
+
+**`k3d cluster list` is empty.** The cluster was deleted. Create it again with the pre-work's install step.
+
+**Portal sign-in fails with `Authentication failed, Failed to obtain access token`, and the catalog stays empty.** The cluster was restarted without k3d, for example by restarting Docker or Colima, and CoreDNS lost the `host.k3d.internal` entry that k3d adds on `k3d cluster start`. The installer's DNS rewrite sends every `*.openchoreo.localhost` name inside the cluster to `host.k3d.internal`, so the portal can no longer reach the identity provider at `thunder.openchoreo.localhost`; its log shows `ENOTFOUND thunder.openchoreo.localhost`. Check the entry:
+
+```
+kubectl -n kube-system get configmap coredns -o jsonpath='{.data.NodeHosts}'; echo
+```
+
+If no line names `host.k3d.internal`, stop and start the cluster through k3d, which adds it back:
+
+```
+k3d cluster stop openchoreo
+k3d cluster start openchoreo
+kubectl wait -n openchoreo-control-plane --for=condition=available --timeout=300s deployment --all
+```
+
+Confirm the name resolves inside the cluster, then sign in again in a private window:
+
+```
+kubectl run dns-test --restart=Never --image=busybox:1.36 -- nslookup -type=a thunder.openchoreo.localhost
+sleep 10; kubectl logs dns-test; kubectl delete pod dns-test
+```
+
+The lookup prints an `Address:` line. After any restart, start the cluster with `k3d cluster start openchoreo` rather than restarting its container.
+
+**Re-running the installer fails at the control plane with `UPGRADE FAILED: conflict occurred while applying object openchoreo-control-plane/cluster-gateway-ca`.** An earlier `kubectl apply` wrote the cluster gateway's CA certificate into this ConfigMap, and Helm 4 applies upgrades server-side, so it will not overwrite a field that another tool owns. Everything before this step is fine. Delete the ConfigMap and run the same install command again:
+
+```
+kubectl delete configmap cluster-gateway-ca -n openchoreo-control-plane
+```
+
+The control plane does not need this copy after the first install, and the installer does not recreate it. Each plane keeps its own copy, which you can check is still there:
+
+```
+kubectl get configmap -A | grep cluster-gateway-ca
+```
+
+It lists the data, workflow and observability plane namespaces. The conflict comes from Helm 4, which Homebrew installs (`helm version --short`); with Helm 4, delete the ConfigMap before each re-run.
+
+When the API line prints a status code such as `200` or `404`, the platform is up. Carry on from the step you were on.
+
 ## Known issues on v1.3
 
 The course runs on v1.3.2. Every row holds on v1.3.1 and v1.3.2 unless it says otherwise. The labs already work around each of these. If you see one of the symptoms, the last column says what fixes it and which lab covers it.
 
 | Symptom | Cause | Fix, and where |
 |---|---|---|
+| The portal, `kubectl` or the MCP servers do not answer after a restart | The cluster or Docker is stopped | See [When the cluster does not start or answer](#when-the-cluster-does-not-start-or-answer) |
+| Portal sign-in fails with `Failed to obtain access token` after a Docker or Colima restart | CoreDNS lost the `host.k3d.internal` entry, so the portal cannot reach the identity provider | `k3d cluster stop openchoreo`, then `k3d cluster start openchoreo`; see [When the cluster does not start or answer](#when-the-cluster-does-not-start-or-answer) |
+| Re-running the installer fails with `UPGRADE FAILED: conflict ... cluster-gateway-ca` | An earlier `kubectl apply` owns the ConfigMap's `ca.crt`, and Helm 4 will not overwrite it | Delete the ConfigMap and re-run the installer; the planes keep their own copies; see [When the cluster does not start or answer](#when-the-cluster-does-not-start-or-answer) |
 | zsh runs `#` lines as commands | Comments are off in interactive zsh | `setopt interactivecomments`, pre-work |
 | A new project gets no cell namespaces and nothing deploys into it | Cells come only from ProjectReleaseBindings, and a project applied with `kubectl` gets none | `create-governed-project.sh` creates one per pipeline environment, Lab 3 |
 | `resourcequotas "cell-quota" is forbidden` | The cluster agent cannot manage ResourceQuotas on any install, out of the box | ClusterRole and binding for `cluster-agent-dataplane`, Lab 3 part C |
@@ -80,6 +166,10 @@ The course runs on v1.3.2. Every row holds on v1.3.1 and v1.3.2 unless it says o
 | A type change creates no new release | Only components with `autoDeploy: true` move to a new release on their own; it is off by default | The Lab 5 component sets it, Lab 5 part E |
 | A component or type applies cleanly but does not work | Most validation errors show in the object's status, not at apply | `kubectl get <kind> <name> -o jsonpath='{.status.conditions}'`, Labs 3 and 5 |
 | The live SLO run says `payments-api` | The sample SLO names a sample service | Score against `slo-greeter.yaml`, Lab 7 stretch |
+
+## About the book
+
+The course material draws on The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2025), alongside the OpenChoreo v1.3 documentation. Everything a lab needs is in this repository, so the book is not mandatory, but we recommend getting it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
 
 ## Good to know
 

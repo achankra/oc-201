@@ -155,6 +155,7 @@ It covers prompts 1, 2 and 4 to 6, and creates the `agent-demo` project with `oc
 
 ## If something fails
 
+- `check-mcp.sh` prints `NO ANSWER` for both servers: the cluster is not running or not ready. Follow [When the cluster does not start or answer](../README.md#when-the-cluster-does-not-start-or-answer), then run the check again.
 - No tools appear: run `./scripts/register-claude-code-token.sh` and restart Claude Code, or check that both URLs answer with `./scripts/check-mcp.sh`.
 - `MCP server openchoreo-cp already exists`: the servers were registered earlier by hand. Run `claude mcp remove openchoreo-cp -s user` and `claude mcp remove openchoreo-obs -s user`, then the token script again.
 - Servers work in one folder only: they were registered for that folder. Run the token script; it registers them for your user.

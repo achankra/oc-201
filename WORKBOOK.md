@@ -4,7 +4,7 @@ Cloud Native Platform Engineering with OpenChoreo. Seven hands-on labs, with a p
 
 Each module folder has two editions of its workbook:
 
-- **WORKBOOK-local.md**: OpenChoreo v1.3.1 on a k3d cluster on your own machine. This is the main path for the course.
+- **WORKBOOK-local.md**: OpenChoreo v1.3.2 on a k3d cluster on your own machine. This is the main path for the course.
 - **WORKBOOK-sandbox.md**: the WSO2 OpenChoreo Sandbox at demo.openchoreo.wso2.com (v1.2.2, one-hour sessions). Use it if you cannot run the cluster locally.
 
 For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
@@ -71,4 +71,4 @@ For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
 | Call a workload | `curl -H "Host: $DEVHOST" http://$GWADDR/greeter-service-http/greeter/greet` |
 
 
-Sources: OpenChoreo v1.3 documentation (openchoreo.dev), the OpenChoreo repository (release-v1.3) and CNCF project page, and The Platform Engineer's Handbook.
+Sources: OpenChoreo v1.3 documentation (openchoreo.dev), the OpenChoreo repository (release-v1.3) and CNCF project page, and The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2025). The book is not required for this course, but we recommend it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
