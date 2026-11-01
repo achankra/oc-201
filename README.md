@@ -169,7 +169,7 @@ The course runs on v1.3.2. Every row holds on v1.3.1 and v1.3.2 unless it says o
 
 ## About the book
 
-The course material draws on The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2025), alongside the OpenChoreo v1.3 documentation. Everything a lab needs is in this repository, so the book is not mandatory, but we recommend getting it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
+The course material draws on The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2026), alongside the OpenChoreo v1.3 documentation. Everything a lab needs is in this repository, so the book is not mandatory, but we recommend getting it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
 
 ## Good to know
 

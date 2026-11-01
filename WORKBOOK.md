@@ -71,4 +71,4 @@ For the OpenChoreo vocabulary, see [TERMINOLOGY.md](TERMINOLOGY.md).
 | Call a workload | `curl -H "Host: $DEVHOST" http://$GWADDR/greeter-service-http/greeter/greet` |
 
 
-Sources: OpenChoreo v1.3 documentation (openchoreo.dev), the OpenChoreo repository (release-v1.3) and CNCF project page, and The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2025). The book is not required for this course, but we recommend it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
+Sources: OpenChoreo v1.3 documentation (openchoreo.dev), the OpenChoreo repository (release-v1.3) and CNCF project page, and The Platform Engineer's Handbook by Ajay Chankramath (Packt, 2026). The book is not required for this course, but we recommend it to go deeper: [peh-packt.platformetrics.com](https://peh-packt.platformetrics.com) or [Amazon](https://www.amazon.com/dp/B0FR59Z7Q2).
